@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>800×800 电商主图裁剪工具</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #15171a;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --accent2: #2563eb;
+      --danger: #b91c1c;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    button, input, select { font: inherit; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px 18px 48px; }
+    .hero { margin-bottom: 18px; }
+    .hero h1 { margin: 0 0 8px; font-size: clamp(25px, 4vw, 38px); letter-spacing: -0.03em; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.7; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 30px rgba(15, 23, 42, .06); }
+    .editor { padding: 18px; }
+    .dropzone { border: 2px dashed #cbd5e1; border-radius: 16px; min-height: 110px; display: grid; place-items: center; text-align: center; padding: 18px; cursor: pointer; transition: .2s; background: #fafafa; }
+    .dropzone.drag { border-color: var(--accent2); background: #eff6ff; }
+    .dropzone strong { display: block; margin-bottom: 4px; }
+    .dropzone span { color: var(--muted); font-size: 14px; }
+    #fileInput { display: none; }
+    .canvasWrap { margin-top: 16px; display: grid; place-items: center; background: repeating-conic-gradient(#f4f4f5 0% 25%, #fff 0% 50%) 50% / 24px 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); min-height: 320px; }
+    canvas { display: block; width: min(100%, 720px); aspect-ratio: 1 / 1; height: auto; cursor: grab; touch-action: none; background: #fff; }
+    canvas.dragging { cursor: grabbing; }
+    .empty { padding: 56px 20px; color: var(--muted); text-align: center; }
+    .side { padding: 18px; position: sticky; top: 16px; }
+    .group { margin-bottom: 18px; }
+    .label { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-weight: 700; margin-bottom: 8px; }
+    .hint { color: var(--muted); font-size: 13px; font-weight: 400; }
+    select, input[type="range"] { width: 100%; }
+    select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    input[type="range"] { accent-color: var(--accent2); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn { width: 100%; border: 0; border-radius: 11px; padding: 11px 12px; cursor: pointer; font-weight: 700; transition: transform .08s ease, opacity .2s; }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .primary { background: var(--accent); color: #fff; }
+    .blue { background: var(--accent2); color: #fff; }
+    .secondary { background: #f3f4f6; color: #111827; border: 1px solid var(--line); }
+    .danger { background: #fff1f2; color: var(--danger); border: 1px solid #fecdd3; }
+    .status { min-height: 22px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .thumbs { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; }
+    .thumb { position: relative; border: 2px solid transparent; border-radius: 12px; overflow: hidden; background: #f3f4f6; cursor: pointer; aspect-ratio: 1/1; }
+    .thumb.active { border-color: var(--accent2); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .badge { position: absolute; right: 5px; bottom: 5px; background: rgba(17,24,39,.78); color: #fff; font-size: 11px; border-radius: 999px; padding: 2px 6px; }
+    .spec { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+    .spec div { padding: 10px; background: #f8fafc; border-radius: 10px; }
+    .spec b { display: block; font-size: 16px; margin-top: 2px; }
+    .footerNote { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>800×800 电商主图裁剪工具</h1>
+      <p>上传图片后拖动调整位置、缩放主体，一键导出标准 800×800 JPG/PNG。全部处理都在你的浏览器本地完成，不上传服务器。</p>
+    </section>
+
+    <section class="layout">
+      <div class="card editor">
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <div>
+            <strong>点击上传图片，或直接拖进这里</strong>
+            <span>支持 JPG / PNG / WEBP，可一次选择多张</span>
+          </div>
+        </label>
+        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+
+        <div class="canvasWrap" id="canvasWrap">
+          <div class="empty" id="emptyState">上传图片后，这里会显示 800×800 裁剪预览</div>
+          <canvas id="canvas" width="800" height="800" hidden></canvas>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+
+      <aside class="card side">
+        <div class="group">
+          <div class="label">处理方式 <span class="hint">默认适合电商主图</span></div>
+          <select id="mode">
+            <option value="crop">裁剪填满 800×800（推荐）</option>
+            <option value="fit">完整保留 + 白底补边</option>
+          </select>
+        </div>
+
+        <div class="group">
+          <div class="label">缩放 <span class="hint" id="zoomText">100%</span></div>
+          <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" />
+        </div>
+
+        <div class="group row">
+          <button class="btn secondary" id="centerBtn" disabled>自动居中</button>
+          <button class="btn danger" id="removeBtn" disabled>移除当前</button>
+        </div>
+
+        <div class="group">
+          <div class="label">导出格式</div>
+          <select id="format">
+            <option value="image/jpeg">JPG（推荐，95%质量）</option>
+            <option value="image/png">PNG（无损）</option>
+          </select>
+        </div>
+
+        <div class="group spec">
+          <div>输出宽度<b>800 px</b></div>
+          <div>输出高度<b>800 px</b></div>
+        </div>
+
+        <div class="group">
+          <button class="btn blue" id="downloadBtn" disabled>下载当前 800×800</button>
+        </div>
+        <div class="group">
+          <button class="btn primary" id="downloadAllBtn" disabled>批量下载全部</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="footerNote">操作提示：在预览图上按住鼠标拖动即可调整主体位置；缩放滑杆用于放大图片。导出文件会自动加上“_800x800”。</div>
+      </aside>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const OUTPUT = 800;
+  const fileInput = document.getElementById('fileInput');
+  const dropzone = document.getElementById('dropzone');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const emptyState = document.getElementById('emptyState');
+  const thumbs = document.getElementById('thumbs');
+  const zoom = document.getElementById('zoom');
+  const zoomText = document.getElementById('zoomText');
+  const mode = document.getElementById('mode');
+  const format = document.getElementById('format');
+  const centerBtn = document.getElementById('centerBtn');
+  const removeBtn = document.getElementById('removeBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const downloadAllBtn = document.getElementById('downloadAllBtn');
+  const status = document.getElementById('status');
+
+  let items = [];
+  let currentIndex = -1;
+  let dragging = false;
+  let lastPoint = null;
+
+  const current = () => items[currentIndex] || null;
+
+  function baseScale(item) {
+    const iw = item.img.naturalWidth;
+    const ih = item.img.naturalHeight;
+    return mode.value === 'crop'
+      ? Math.max(OUTPUT / iw, OUTPUT / ih)
+      : Math.min(OUTPUT / iw, OUTPUT / ih);
+  }
+
+  function clampPan(item) {
+    if (!item || mode.value !== 'crop') return;
+    const scale = baseScale(item) * item.zoom;
+    const dw = item.img.naturalWidth * scale;
+    const dh = item.img.naturalHeight * scale;
+    const maxX = Math.max(0, (dw - OUTPUT) / 2);
+    const maxY = Math.max(0, (dh - OUTPUT) / 2);
+    item.x = Math.max(-maxX, Math.min(maxX, item.x));
+    item.y = Math.max(-maxY, Math.min(maxY, item.y));
+  }
+
+  function renderTo(context, item) {
+    context.save();
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, OUTPUT, OUTPUT);
+    if (!item) { context.restore(); return; }
+
+    const scale = baseScale(item) * item.zoom;
+    const dw = item.img.naturalWidth * scale;
+    const dh = item.img.naturalHeight * scale;
+    const dx = OUTPUT / 2 - dw / 2 + item.x;
+    const dy = OUTPUT / 2 - dh / 2 + item.y;
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(item.img, dx, dy, dw, dh);
+    context.restore();
+  }
+
+  function render() {
+    const item = current();
+    if (!item) {
+      canvas.hidden = true;
+      emptyState.hidden = false;
+      setControls(false);
+      return;
+    }
+    clampPan(item);
+    canvas.hidden = false;
+    emptyState.hidden = true;
+    renderTo(ctx, item);
+    zoom.value = String(item.zoom);
+    zoomText.textContent = Math.round(item.zoom * 100) + '%';
+    setControls(true);
+    renderThumbs();
+  }
+
+  function setControls(enabled) {
+    centerBtn.disabled = !enabled;
+    removeBtn.disabled = !enabled;
+    downloadBtn.disabled = !enabled;
+    downloadAllBtn.disabled = items.length === 0;
+  }
+
+  function renderThumbs() {
+    thumbs.innerHTML = '';
+    items.forEach((item, i) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'thumb' + (i === currentIndex ? ' active' : '');
+      el.title = item.file.name;
+      const img = document.createElement('img');
+      img.src = item.url;
+      img.alt = item.file.name;
+      const badge = document.createElement('span');
+      badge.className = 'badge';
+      badge.textContent = String(i + 1);
+      el.append(img, badge);
+      el.addEventListener('click', () => {
+        currentIndex = i;
+        render();
+      });
+      thumbs.appendChild(el);
+    });
+  }
+
+  async function addFiles(fileList) {
+    const accepted = [...fileList].filter(f => /^image\/(jpeg|png|webp)$/.test(f.type));
+    if (!accepted.length) {
+      status.textContent = '没有找到可用的 JPG、PNG 或 WEBP 图片。';
+      return;
+    }
+    status.textContent = '正在读取图片…';
+    const startIndex = items.length;
+
+    for (const file of accepted) {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+      try {
+        await img.decode();
+        items.push({ file, url, img, zoom: 1, x: 0, y: 0 });
+      } catch (e) {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    if (currentIndex === -1 && items.length) currentIndex = startIndex;
+    status.textContent = `已载入 ${items.length} 张图片。`;
+    render();
+  }
+
+  function resetCurrent() {
+    const item = current();
+    if (!item) return;
+    item.zoom = 1;
+    item.x = 0;
+    item.y = 0;
+    render();
+  }
+
+  function safeBaseName(name) {
+    return name.replace(/\.[^.]+$/, '').replace(/[\\/:*?"<>|]+/g, '_') || 'image';
+  }
+
+  function makeBlob(item) {
+    return new Promise(resolve => {
+      const out = document.createElement('canvas');
+      out.width = OUTPUT;
+      out.height = OUTPUT;
+      renderTo(out.getContext('2d', { alpha: false }), item);
+      const mime = format.value;
+      const quality = mime === 'image/jpeg' ? 0.95 : undefined;
+      out.toBlob(resolve, mime, quality);
+    });
+  }
+
+  async function downloadItem(item, index, quiet = false) {
+    const blob = await makeBlob(item);
+    if (!blob) throw new Error('导出失败');
+    const ext = format.value === 'image/png' ? 'png' : 'jpg';
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${safeBaseName(item.file.name)}_800x800.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+    if (!quiet) status.textContent = `第 ${index + 1} 张已导出：800×800 ${ext.toUpperCase()}`;
+  }
+
+  fileInput.addEventListener('change', e => {
+    addFiles(e.target.files);
+    e.target.value = '';
+  });
+
+  ['dragenter', 'dragover'].forEach(type => {
+    dropzone.addEventListener(type, e => {
+      e.preventDefault();
+      dropzone.classList.add('drag');
+    });
+  });
+  ['dragleave', 'drop'].forEach(type => {
+    dropzone.addEventListener(type, e => {
+      e.preventDefault();
+      dropzone.classList.remove('drag');
+    });
+  });
+  dropzone.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+  zoom.addEventListener('input', () => {
+    const item = current();
+    if (!item) return;
+    item.zoom = Number(zoom.value);
+    clampPan(item);
+    zoomText.textContent = Math.round(item.zoom * 100) + '%';
+    renderTo(ctx, item);
+  });
+
+  mode.addEventListener('change', resetCurrent);
+  centerBtn.addEventListener('click', resetCurrent);
+
+  removeBtn.addEventListener('click', () => {
+    const item = current();
+    if (!item) return;
+    URL.revokeObjectURL(item.url);
+    items.splice(currentIndex, 1);
+    if (!items.length) currentIndex = -1;
+    else currentIndex = Math.min(currentIndex, items.length - 1);
+    status.textContent = items.length ? `剩余 ${items.length} 张图片。` : '图片已清空。';
+    renderThumbs();
+    render();
+  });
+
+  downloadBtn.addEventListener('click', async () => {
+    const item = current();
+    if (!item) return;
+    downloadBtn.disabled = true;
+    try { await downloadItem(item, currentIndex); }
+    catch (e) { status.textContent = '导出失败，请重新尝试。'; }
+    finally { downloadBtn.disabled = false; }
+  });
+
+  downloadAllBtn.addEventListener('click', async () => {
+    if (!items.length) return;
+    downloadAllBtn.disabled = true;
+    status.textContent = `正在批量导出 ${items.length} 张图片…`;
+    try {
+      for (let i = 0; i < items.length; i++) {
+        await downloadItem(items[i], i, true);
+        await new Promise(r => setTimeout(r, 180));
+      }
+      status.textContent = `已完成 ${items.length} 张 800×800 图片导出。若浏览器拦截，请允许“多个文件下载”。`;
+    } catch (e) {
+      status.textContent = '批量导出中断，请允许浏览器下载多个文件后重试。';
+    } finally {
+      downloadAllBtn.disabled = false;
+    }
+  });
+
+  function eventPoint(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * OUTPUT / rect.width,
+      y: (e.clientY - rect.top) * OUTPUT / rect.height
+    };
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    if (!current()) return;
+    dragging = true;
+    lastPoint = eventPoint(e);
+    canvas.classList.add('dragging');
+    canvas.setPointerCapture(e.pointerId);
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    if (!dragging || !current()) return;
+    const p = eventPoint(e);
+    const item = current();
+    item.x += p.x - lastPoint.x;
+    item.y += p.y - lastPoint.y;
+    lastPoint = p;
+    clampPan(item);
+    renderTo(ctx, item);
+  });
+
+  function endDrag(e) {
+    dragging = false;
+    lastPoint = null;
+    canvas.classList.remove('dragging');
+    try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  window.addEventListener('beforeunload', () => {
+    items.forEach(item => URL.revokeObjectURL(item.url));
+  });
+})();
+</script>
+</body>
+</html>
