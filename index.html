@@ -7,133 +7,135 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f5f6f8;
-      --card: #ffffff;
-      --text: #15171a;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #111827;
-      --accent2: #2563eb;
-      --danger: #b91c1c;
+      --bg:#f5f6f8; --card:#fff; --text:#15171a; --muted:#6b7280;
+      --line:#e5e7eb; --accent:#111827; --blue:#2563eb; --green:#15803d; --danger:#b91c1c;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); }
-    button, input, select { font: inherit; }
-    .page { max-width: 1180px; margin: 0 auto; padding: 28px 18px 48px; }
-    .hero { margin-bottom: 18px; }
-    .hero h1 { margin: 0 0 8px; font-size: clamp(25px, 4vw, 38px); letter-spacing: -0.03em; }
-    .hero p { margin: 0; color: var(--muted); line-height: 1.7; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 30px rgba(15, 23, 42, .06); }
-    .editor { padding: 18px; }
-    .dropzone { border: 2px dashed #cbd5e1; border-radius: 16px; min-height: 110px; display: grid; place-items: center; text-align: center; padding: 18px; cursor: pointer; transition: .2s; background: #fafafa; }
-    .dropzone.drag { border-color: var(--accent2); background: #eff6ff; }
-    .dropzone strong { display: block; margin-bottom: 4px; }
-    .dropzone span { color: var(--muted); font-size: 14px; }
-    #fileInput { display: none; }
-    .canvasWrap { margin-top: 16px; display: grid; place-items: center; background: repeating-conic-gradient(#f4f4f5 0% 25%, #fff 0% 50%) 50% / 24px 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); min-height: 320px; }
-    canvas { display: block; width: min(100%, 720px); aspect-ratio: 1 / 1; height: auto; cursor: grab; touch-action: none; background: #fff; }
-    canvas.dragging { cursor: grabbing; }
-    .empty { padding: 56px 20px; color: var(--muted); text-align: center; }
-    .side { padding: 18px; position: sticky; top: 16px; }
-    .group { margin-bottom: 18px; }
-    .label { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-weight: 700; margin-bottom: 8px; }
-    .hint { color: var(--muted); font-size: 13px; font-weight: 400; }
-    select, input[type="range"] { width: 100%; }
-    select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
-    input[type="range"] { accent-color: var(--accent2); }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .btn { width: 100%; border: 0; border-radius: 11px; padding: 11px 12px; cursor: pointer; font-weight: 700; transition: transform .08s ease, opacity .2s; }
-    .btn:active { transform: translateY(1px); }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .primary { background: var(--accent); color: #fff; }
-    .blue { background: var(--accent2); color: #fff; }
-    .secondary { background: #f3f4f6; color: #111827; border: 1px solid var(--line); }
-    .danger { background: #fff1f2; color: var(--danger); border: 1px solid #fecdd3; }
-    .status { min-height: 22px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .thumbs { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; }
-    .thumb { position: relative; border: 2px solid transparent; border-radius: 12px; overflow: hidden; background: #f3f4f6; cursor: pointer; aspect-ratio: 1/1; }
-    .thumb.active { border-color: var(--accent2); }
-    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .badge { position: absolute; right: 5px; bottom: 5px; background: rgba(17,24,39,.78); color: #fff; font-size: 11px; border-radius: 999px; padding: 2px 6px; }
-    .spec { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
-    .spec div { padding: 10px; background: #f8fafc; border-radius: 10px; }
-    .spec b { display: block; font-size: 16px; margin-top: 2px; }
-    .footerNote { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-    @media (max-width: 860px) {
-      .layout { grid-template-columns: 1fr; }
-      .side { position: static; }
-    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    button,input,select{font:inherit}
+    .page{max-width:1180px;margin:0 auto;padding:28px 18px 48px}
+    .hero{margin-bottom:18px}
+    .hero h1{margin:0 0 8px;font-size:clamp(25px,4vw,38px);letter-spacing:-.03em}
+    .hero p{margin:0;color:var(--muted);line-height:1.7}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
+    .editor{padding:18px}
+    .dropzone{border:2px dashed #cbd5e1;border-radius:16px;min-height:110px;display:grid;place-items:center;text-align:center;padding:18px;cursor:pointer;transition:.2s;background:#fafafa}
+    .dropzone.drag{border-color:var(--blue);background:#eff6ff}
+    .dropzone strong{display:block;margin-bottom:4px}
+    .dropzone span{color:var(--muted);font-size:14px}
+    #fileInput{display:none}
+    .canvasWrap{margin-top:16px;display:grid;place-items:center;background:repeating-conic-gradient(#f4f4f5 0% 25%,#fff 0% 50%) 50%/24px 24px;border-radius:14px;overflow:hidden;border:1px solid var(--line);min-height:320px}
+    canvas{display:block;width:min(100%,720px);aspect-ratio:1/1;height:auto;cursor:grab;touch-action:none;background:#fff}
+    canvas.dragging{cursor:grabbing}
+    .empty{padding:56px 20px;color:var(--muted);text-align:center}
+    .side{padding:18px;position:sticky;top:16px}
+    .group{margin-bottom:18px}
+    .label{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:700;margin-bottom:8px}
+    .hint{color:var(--muted);font-size:13px;font-weight:400}
+    select,input[type="range"]{width:100%}
+    select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    input[type="range"]{accent-color:var(--blue)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{width:100%;border:0;border-radius:11px;padding:11px 12px;cursor:pointer;font-weight:700;transition:transform .08s ease,opacity .2s}
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .primary{background:var(--accent);color:#fff}
+    .blue{background:var(--blue);color:#fff}
+    .green{background:var(--green);color:#fff}
+    .secondary{background:#f3f4f6;color:#111827;border:1px solid var(--line)}
+    .danger{background:#fff1f2;color:var(--danger);border:1px solid #fecdd3}
+    .status{min-height:22px;color:var(--muted);font-size:13px;line-height:1.5}
+    .thumbs{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
+    .thumb{position:relative;border:2px solid transparent;border-radius:12px;overflow:hidden;background:#f3f4f6;cursor:pointer;aspect-ratio:1/1;padding:0}
+    .thumb.active{border-color:var(--blue)}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .badge{position:absolute;right:5px;bottom:5px;background:rgba(17,24,39,.78);color:#fff;font-size:11px;border-radius:999px;padding:2px 6px}
+    .spec{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px}
+    .spec div{padding:10px;background:#f8fafc;border-radius:10px}
+    .spec b{display:block;font-size:16px;margin-top:2px}
+    .saveBox{border:1px solid #dbeafe;background:#f8fbff;border-radius:12px;padding:12px}
+    .folderState{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5;word-break:break-all}
+    .folderState.ok{color:var(--green);font-weight:600}
+    .footerNote{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.6}
+    @media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static}}
   </style>
 </head>
 <body>
-  <main class="page">
-    <section class="hero">
-      <h1>800×800 电商主图裁剪工具</h1>
-      <p>上传图片后拖动调整位置、缩放主体，一键导出标准 800×800 JPG/PNG。全部处理都在你的浏览器本地完成，不上传服务器。</p>
-    </section>
+<main class="page">
+  <section class="hero">
+    <h1>800×800 电商主图裁剪工具</h1>
+    <p>上传图片后拖动调整位置、缩放主体，一键导出标准 800×800 JPG/PNG。图片只在浏览器本地处理，不上传服务器。</p>
+  </section>
 
-    <section class="layout">
-      <div class="card editor">
-        <label class="dropzone" id="dropzone" for="fileInput">
-          <div>
-            <strong>点击上传图片，或直接拖进这里</strong>
-            <span>支持 JPG / PNG / WEBP，可一次选择多张</span>
-          </div>
-        </label>
-        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
-
-        <div class="canvasWrap" id="canvasWrap">
-          <div class="empty" id="emptyState">上传图片后，这里会显示 800×800 裁剪预览</div>
-          <canvas id="canvas" width="800" height="800" hidden></canvas>
+  <section class="layout">
+    <div class="card editor">
+      <label class="dropzone" id="dropzone" for="fileInput">
+        <div>
+          <strong>点击上传图片，或直接拖进这里</strong>
+          <span>支持 JPG / PNG / WEBP，可一次选择多张</span>
         </div>
-        <div class="thumbs" id="thumbs"></div>
+      </label>
+      <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+
+      <div class="canvasWrap">
+        <div class="empty" id="emptyState">上传图片后，这里会显示 800×800 裁剪预览</div>
+        <canvas id="canvas" width="800" height="800" hidden></canvas>
+      </div>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+
+    <aside class="card side">
+      <div class="group">
+        <div class="label">处理方式 <span class="hint">默认适合电商主图</span></div>
+        <select id="mode">
+          <option value="crop">裁剪填满 800×800（推荐）</option>
+          <option value="fit">完整保留 + 白底补边</option>
+        </select>
       </div>
 
-      <aside class="card side">
-        <div class="group">
-          <div class="label">处理方式 <span class="hint">默认适合电商主图</span></div>
-          <select id="mode">
-            <option value="crop">裁剪填满 800×800（推荐）</option>
-            <option value="fit">完整保留 + 白底补边</option>
-          </select>
-        </div>
+      <div class="group">
+        <div class="label">缩放 <span class="hint" id="zoomText">100%</span></div>
+        <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" />
+      </div>
 
-        <div class="group">
-          <div class="label">缩放 <span class="hint" id="zoomText">100%</span></div>
-          <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" />
-        </div>
+      <div class="group row">
+        <button class="btn secondary" id="centerBtn" disabled>自动居中</button>
+        <button class="btn danger" id="removeBtn" disabled>移除当前</button>
+      </div>
 
-        <div class="group row">
-          <button class="btn secondary" id="centerBtn" disabled>自动居中</button>
-          <button class="btn danger" id="removeBtn" disabled>移除当前</button>
-        </div>
+      <div class="group">
+        <div class="label">导出格式</div>
+        <select id="format">
+          <option value="image/jpeg">JPG（推荐，95%质量）</option>
+          <option value="image/png">PNG（无损）</option>
+        </select>
+      </div>
 
-        <div class="group">
-          <div class="label">导出格式</div>
-          <select id="format">
-            <option value="image/jpeg">JPG（推荐，95%质量）</option>
-            <option value="image/png">PNG（无损）</option>
-          </select>
-        </div>
+      <div class="group spec">
+        <div>输出宽度<b>800 px</b></div>
+        <div>输出高度<b>800 px</b></div>
+      </div>
 
-        <div class="group spec">
-          <div>输出宽度<b>800 px</b></div>
-          <div>输出高度<b>800 px</b></div>
-        </div>
+      <div class="group saveBox">
+        <div class="label">保存位置 <span class="hint">Chrome / Edge</span></div>
+        <button class="btn green" id="chooseFolderBtn">选择保存文件夹</button>
+        <div class="folderState" id="folderState">未选择文件夹。单张保存时会弹出“另存为”；批量保存时会先让你选择文件夹。</div>
+      </div>
 
-        <div class="group">
-          <button class="btn blue" id="downloadBtn" disabled>下载当前 800×800</button>
-        </div>
-        <div class="group">
-          <button class="btn primary" id="downloadAllBtn" disabled>批量下载全部</button>
-        </div>
-        <div class="status" id="status"></div>
-        <div class="footerNote">操作提示：在预览图上按住鼠标拖动即可调整主体位置；缩放滑杆用于放大图片。导出文件会自动加上“_800x800”。</div>
-      </aside>
-    </section>
-  </main>
+      <div class="group">
+        <button class="btn blue" id="downloadBtn" disabled>保存当前 800×800</button>
+      </div>
+      <div class="group">
+        <button class="btn primary" id="downloadAllBtn" disabled>批量保存全部到文件夹</button>
+      </div>
+
+      <div class="status" id="status"></div>
+      <div class="footerNote">操作提示：在预览图上按住鼠标拖动可调整主体位置；缩放滑杆用于放大。导出文件名会自动加“_800x800”。选择文件夹后，之后的图片会直接保存到该文件夹。</div>
+    </aside>
+  </section>
+</main>
 
 <script>
 (() => {
@@ -150,6 +152,8 @@
   const format = document.getElementById('format');
   const centerBtn = document.getElementById('centerBtn');
   const removeBtn = document.getElementById('removeBtn');
+  const chooseFolderBtn = document.getElementById('chooseFolderBtn');
+  const folderState = document.getElementById('folderState');
   const downloadBtn = document.getElementById('downloadBtn');
   const downloadAllBtn = document.getElementById('downloadAllBtn');
   const status = document.getElementById('status');
@@ -158,8 +162,17 @@
   let currentIndex = -1;
   let dragging = false;
   let lastPoint = null;
+  let directoryHandle = null;
 
   const current = () => items[currentIndex] || null;
+  const supportsDirectoryPicker = typeof window.showDirectoryPicker === 'function';
+  const supportsSavePicker = typeof window.showSaveFilePicker === 'function';
+
+  if (!supportsDirectoryPicker) {
+    chooseFolderBtn.textContent = '浏览器不支持直接选文件夹';
+    chooseFolderBtn.disabled = true;
+    folderState.textContent = '当前浏览器不支持网页直接写入指定文件夹。建议使用最新版 Chrome 或 Edge。';
+  }
 
   function baseScale(item) {
     const iw = item.img.naturalWidth;
@@ -203,6 +216,7 @@
       canvas.hidden = true;
       emptyState.hidden = false;
       setControls(false);
+      renderThumbs();
       return;
     }
     clampPan(item);
@@ -229,12 +243,15 @@
       el.type = 'button';
       el.className = 'thumb' + (i === currentIndex ? ' active' : '');
       el.title = item.file.name;
+
       const img = document.createElement('img');
       img.src = item.url;
       img.alt = item.file.name;
+
       const badge = document.createElement('span');
       badge.className = 'badge';
       badge.textContent = String(i + 1);
+
       el.append(img, badge);
       el.addEventListener('click', () => {
         currentIndex = i;
@@ -250,6 +267,7 @@
       status.textContent = '没有找到可用的 JPG、PNG 或 WEBP 图片。';
       return;
     }
+
     status.textContent = '正在读取图片…';
     const startIndex = items.length;
 
@@ -261,7 +279,7 @@
       try {
         await img.decode();
         items.push({ file, url, img, zoom: 1, x: 0, y: 0 });
-      } catch (e) {
+      } catch (_) {
         URL.revokeObjectURL(url);
       }
     }
@@ -284,30 +302,131 @@
     return name.replace(/\.[^.]+$/, '').replace(/[\\/:*?"<>|]+/g, '_') || 'image';
   }
 
+  function extension() {
+    return format.value === 'image/png' ? 'png' : 'jpg';
+  }
+
+  function exportName(item) {
+    return `${safeBaseName(item.file.name)}_800x800.${extension()}`;
+  }
+
   function makeBlob(item) {
     return new Promise(resolve => {
       const out = document.createElement('canvas');
       out.width = OUTPUT;
       out.height = OUTPUT;
-      renderTo(out.getContext('2d', { alpha: false }), item);
+      const outCtx = out.getContext('2d', { alpha: false });
+      renderTo(outCtx, item);
       const mime = format.value;
       const quality = mime === 'image/jpeg' ? 0.95 : undefined;
       out.toBlob(resolve, mime, quality);
     });
   }
 
-  async function downloadItem(item, index, quiet = false) {
+  async function chooseFolder() {
+    if (!supportsDirectoryPicker) return null;
+    try {
+      const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      directoryHandle = handle;
+      folderState.textContent = `已选择：${handle.name}`;
+      folderState.classList.add('ok');
+      status.textContent = `保存位置已设为“${handle.name}”。`;
+      return handle;
+    } catch (err) {
+      if (err && err.name !== 'AbortError') {
+        status.textContent = '无法选择文件夹，请检查浏览器权限后重试。';
+      }
+      return null;
+    }
+  }
+
+  async function ensureDirectoryPermission(handle) {
+    if (!handle) return false;
+    const opts = { mode: 'readwrite' };
+    if ((await handle.queryPermission(opts)) === 'granted') return true;
+    return (await handle.requestPermission(opts)) === 'granted';
+  }
+
+  async function writeBlobToDirectory(handle, filename, blob) {
+    if (!(await ensureDirectoryPermission(handle))) throw new Error('没有文件夹写入权限');
+    const fileHandle = await handle.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+  }
+
+  async function saveCurrent(item) {
     const blob = await makeBlob(item);
     if (!blob) throw new Error('导出失败');
-    const ext = format.value === 'image/png' ? 'png' : 'jpg';
+    const filename = exportName(item);
+
+    if (directoryHandle) {
+      await writeBlobToDirectory(directoryHandle, filename, blob);
+      return `已保存到“${directoryHandle.name}”：${filename}`;
+    }
+
+    if (supportsSavePicker) {
+      const isPng = format.value === 'image/png';
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: isPng ? 'PNG 图片' : 'JPG 图片',
+          accept: isPng ? { 'image/png': ['.png'] } : { 'image/jpeg': ['.jpg', '.jpeg'] }
+        }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return `已保存：${filename}`;
+    }
+
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${safeBaseName(item.file.name)}_800x800.${ext}`;
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(link.href), 2000);
-    if (!quiet) status.textContent = `第 ${index + 1} 张已导出：800×800 ${ext.toUpperCase()}`;
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    return `已下载：${filename}`;
+  }
+
+  async function saveAll() {
+    if (!items.length) return;
+
+    let handle = directoryHandle;
+    if (!handle && supportsDirectoryPicker) {
+      handle = await chooseFolder();
+      if (!handle) return;
+    }
+
+    if (handle) {
+      status.textContent = `正在保存 ${items.length} 张图片到“${handle.name}”…`;
+      for (let i = 0; i < items.length; i++) {
+        const blob = await makeBlob(items[i]);
+        if (!blob) throw new Error('导出失败');
+        await writeBlobToDirectory(handle, exportName(items[i]), blob);
+        status.textContent = `正在保存 ${i + 1}/${items.length}…`;
+      }
+      status.textContent = `完成：${items.length} 张 800×800 图片已保存到“${handle.name}”。`;
+      return;
+    }
+
+    status.textContent = `浏览器不支持指定文件夹，正在使用普通下载方式导出 ${items.length} 张…`;
+    for (let i = 0; i < items.length; i++) {
+      const blob = await makeBlob(items[i]);
+      if (!blob) throw new Error('导出失败');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = exportName(items[i]);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      await new Promise(r => setTimeout(r, 180));
+    }
+    status.textContent = `完成：已发起 ${items.length} 张图片下载。`;
   }
 
   fileInput.addEventListener('change', e => {
@@ -315,18 +434,20 @@
     e.target.value = '';
   });
 
-  ['dragenter', 'dragover'].forEach(type => {
+  ['dragenter','dragover'].forEach(type => {
     dropzone.addEventListener(type, e => {
       e.preventDefault();
       dropzone.classList.add('drag');
     });
   });
-  ['dragleave', 'drop'].forEach(type => {
+
+  ['dragleave','drop'].forEach(type => {
     dropzone.addEventListener(type, e => {
       e.preventDefault();
       dropzone.classList.remove('drag');
     });
   });
+
   dropzone.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 
   zoom.addEventListener('input', () => {
@@ -340,6 +461,7 @@
 
   mode.addEventListener('change', resetCurrent);
   centerBtn.addEventListener('click', resetCurrent);
+  chooseFolderBtn.addEventListener('click', chooseFolder);
 
   removeBtn.addEventListener('click', () => {
     const item = current();
@@ -349,7 +471,6 @@
     if (!items.length) currentIndex = -1;
     else currentIndex = Math.min(currentIndex, items.length - 1);
     status.textContent = items.length ? `剩余 ${items.length} 张图片。` : '图片已清空。';
-    renderThumbs();
     render();
   });
 
@@ -357,23 +478,24 @@
     const item = current();
     if (!item) return;
     downloadBtn.disabled = true;
-    try { await downloadItem(item, currentIndex); }
-    catch (e) { status.textContent = '导出失败，请重新尝试。'; }
-    finally { downloadBtn.disabled = false; }
+    try {
+      status.textContent = '正在生成 800×800 图片…';
+      status.textContent = await saveCurrent(item);
+    } catch (err) {
+      if (err && err.name === 'AbortError') status.textContent = '已取消保存。';
+      else status.textContent = '保存失败，请重新选择保存位置后再试。';
+    } finally {
+      downloadBtn.disabled = false;
+    }
   });
 
   downloadAllBtn.addEventListener('click', async () => {
     if (!items.length) return;
     downloadAllBtn.disabled = true;
-    status.textContent = `正在批量导出 ${items.length} 张图片…`;
     try {
-      for (let i = 0; i < items.length; i++) {
-        await downloadItem(items[i], i, true);
-        await new Promise(r => setTimeout(r, 180));
-      }
-      status.textContent = `已完成 ${items.length} 张 800×800 图片导出。若浏览器拦截，请允许“多个文件下载”。`;
-    } catch (e) {
-      status.textContent = '批量导出中断，请允许浏览器下载多个文件后重试。';
+      await saveAll();
+    } catch (_) {
+      status.textContent = '批量保存失败，请重新选择保存文件夹后再试。';
     } finally {
       downloadAllBtn.disabled = false;
     }
@@ -412,6 +534,7 @@
     canvas.classList.remove('dragging');
     try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
   }
+
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
 
