@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ecommerce-image-workbench
+    runtime: node
+    plan: free
+    buildCommand: node --check cloud-server.cjs
+    startCommand: node cloud-server.cjs
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: OPENAI_IMAGE_MODEL
+        value: gpt-image-2

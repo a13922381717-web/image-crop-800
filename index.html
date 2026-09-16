@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>800×800 电商主图裁剪工具</title>
+  <title>电商图片工作台 · 裁剪、详情图与批量处理</title>
+  <link rel="stylesheet" href="detail-tool.css" />
   <style>
     :root {
       color-scheme: light;
@@ -27,8 +28,8 @@
     .dropzone span{color:var(--muted);font-size:14px}
     #fileInput{display:none}
     .canvasWrap{margin-top:16px;display:grid;place-items:center;background:repeating-conic-gradient(#f4f4f5 0% 25%,#fff 0% 50%) 50%/24px 24px;border-radius:14px;overflow:hidden;border:1px solid var(--line);min-height:320px}
-    canvas{display:block;width:min(100%,720px);aspect-ratio:1/1;height:auto;cursor:grab;touch-action:none;background:#fff}
-    canvas.dragging{cursor:grabbing}
+    #canvas{display:block;width:min(100%,720px);aspect-ratio:1/1;height:auto;cursor:grab;touch-action:none;background:#fff}
+    #canvas.dragging{cursor:grabbing}
     .empty{padding:56px 20px;color:var(--muted);text-align:center}
     .side{padding:18px;position:sticky;top:16px}
     .group{margin-bottom:18px}
@@ -61,15 +62,45 @@
     .footerNote{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.6}
     @media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static}}
   </style>
+  <link rel="stylesheet" href="studio.css" />
+  <link rel="stylesheet" href="batch-workbench.css" />
+  <link rel="stylesheet" href="ai-workbench.css" />
 </head>
 <body>
+<div class="studio-shell">
+  <aside class="studio-sidebar" aria-label="工具导航">
+    <div class="studio-brand"><span class="studio-brand-mark" aria-hidden="true">图</span><div><strong>电商图片工作台</strong><small>IMAGE STUDIO</small></div><button type="button" id="studioMenuToggle" aria-controls="studioMenu" aria-expanded="false">功能菜单</button></div>
+    <div id="studioMenu" class="studio-menu">
+      <nav id="studioNav" aria-label="图片功能">
+        <div class="studio-nav-group"><p>主图与详情</p>
+          <button type="button" id="cropTab" class="studio-nav-item is-active" data-tool="crop" aria-controls="cropPanel" aria-current="page"><span class="studio-tool-icon icon-blue" aria-hidden="true">▣</span><span>800×800 主图裁剪</span></button>
+          <button type="button" id="aiTab" class="studio-nav-item" data-tool="ai" aria-controls="aiPanel"><span class="studio-tool-icon icon-purple" aria-hidden="true">✧</span><span>AI 模特与场景</span></button>
+          <button type="button" id="detailTab" class="studio-nav-item" data-tool="detail" aria-controls="detailPanel"><span class="studio-tool-icon icon-green" aria-hidden="true">模</span><span>模板详情图生成</span></button>
+          <button type="button" id="translateTab" class="studio-nav-item" data-tool="translate" aria-controls="detailPanel"><span class="studio-tool-icon icon-purple" aria-hidden="true">译</span><span>详情图英文翻译</span></button>
+        </div>
+        <div class="studio-nav-group"><p>批量图片处理</p>
+          <button type="button" class="studio-nav-item" data-tool="portrait" aria-controls="batchPanel"><span class="studio-tool-icon icon-cyan" aria-hidden="true">↕</span><span>批量生成 3:4 长图</span></button>
+          <button type="button" class="studio-nav-item" data-tool="png800" aria-controls="batchPanel"><span class="studio-tool-icon icon-green" aria-hidden="true">P</span><span>批量 800×800 PNG</span></button>
+          <button type="button" class="studio-nav-item" data-tool="resize" aria-controls="batchPanel"><span class="studio-tool-icon icon-purple" aria-hidden="true">↔</span><span>批量调整尺寸</span></button>
+          <button type="button" class="studio-nav-item" data-tool="compress" aria-controls="batchPanel"><span class="studio-tool-icon icon-orange" aria-hidden="true">↓</span><span>图片压缩与格式转换</span></button>
+        </div>
+        <div class="studio-nav-group"><p>排版与修饰</p>
+          <button type="button" class="studio-nav-item" data-tool="collage" aria-controls="batchPanel"><span class="studio-tool-icon icon-cyan" aria-hidden="true">▦</span><span>商品拼图与长图拼接</span></button>
+          <button type="button" class="studio-nav-item" data-tool="watermark" aria-controls="batchPanel"><span class="studio-tool-icon icon-blue" aria-hidden="true">水</span><span>批量添加文字水印</span></button>
+          <button type="button" class="studio-nav-item" data-tool="background" aria-controls="batchPanel"><span class="studio-tool-icon icon-green" aria-hidden="true">◐</span><span>批量纯色背景替换</span></button>
+        </div>
+      </nav>
+      <div class="studio-sidebar-footer"><span><i aria-hidden="true"></i>11 项图片工具</span><p>本地图片处理 + AI 创作<br />中英文详情，一站完成</p><div id="studioNavStatus" role="status" aria-live="polite"></div></div>
+    </div>
+  </aside>
 <main class="page">
   <section class="hero">
-    <h1>800×800 电商主图裁剪工具</h1>
-    <p>上传图片后拖动调整位置、缩放主体，一键导出标准 800×800 JPG/PNG。图片只在浏览器本地处理，不上传服务器。</p>
+    <div class="studio-breadcrumb">电商图片工作台 <span>/</span> <span id="studioCategory">主图与详情</span></div>
+    <h1 id="studioToolTitle">800×800 主图裁剪</h1>
+    <p id="studioToolDescription">拖动、缩放调整主体，裁剪填满或白底补边，批量保存标准电商主图。</p>
   </section>
 
-  <section class="layout">
+  <section class="layout" id="cropPanel" aria-labelledby="cropTab">
     <div class="card editor">
       <label class="dropzone" id="dropzone" for="fileInput">
         <div>
@@ -135,7 +166,73 @@
       <div class="footerNote">操作提示：在预览图上按住鼠标拖动可调整主体位置；缩放滑杆用于放大。导出文件名会自动加“_800x800”。选择文件夹后，之后的图片会直接保存到该文件夹。</div>
     </aside>
   </section>
+  <section id="detailPanel" class="detail-workspace" aria-labelledby="detailTab" hidden>
+    <div class="detail-intro"><div><h2>一份素材，生成一套详情图</h2><p>上传素材、填写卖点，自动排版为 5 张 800×1200 图片。</p></div><span class="local-pill">图片本地处理</span></div>
+    <div class="detail-layout">
+      <form id="detailForm" class="card detail-form" novalidate>
+        <fieldset id="detailFields">
+          <section class="detail-section">
+            <h3><span>01</span> 产品素材</h3>
+            <label class="detail-drop" id="productDrop" for="productInput" tabindex="0" role="button"><strong>＋ 上传产品图</strong><span>JPG / PNG / WebP，最多 6 张，每张 ≤ 20 MB</span></label>
+            <input id="productInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+            <div id="productAssets" class="detail-assets" aria-label="已上传产品图"></div>
+            <button type="button" class="text-button" id="useCropBtn">使用主图工具中当前的裁剪结果 →</button>
+            <p class="detail-help">第一张用于封面。点击“设为封面”可更换；多张图按上传顺序用于多角度展示。</p>
+            <label class="detail-drop compact" id="detailDrop" for="detailInput" tabindex="0" role="button"><strong>＋ 上传细节图（选填）</strong><span>最多 6 张，用于展示材质、工艺等细节</span></label>
+            <input id="detailInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+            <div id="detailAssets" class="detail-assets" aria-label="已上传细节图"></div>
+            <p class="detail-help">未上传细节图时，将使用产品图。素材保持原比例并完整显示。</p>
+          </section>
+          <section class="detail-section">
+            <h3><span>02</span> 产品文案</h3>
+            <label class="detail-label" for="detailLanguage">详情图语言</label>
+            <select id="detailLanguage"><option value="zh">中文详情图</option><option value="en">英文详情图 · English</option></select>
+            <label class="detail-label" for="productName">产品名称 <span id="sourceNameHint">必填 · 最多 40 字</span></label>
+            <input id="productName" type="text" maxlength="40" placeholder="例如：宽松直筒牛仔裤" required />
+            <label class="detail-label" for="productSubtitle">副标题 <span>选填 · 最多 60 字</span></label>
+            <input id="productSubtitle" type="text" maxlength="60" placeholder="用一句话介绍产品风格或用途" />
+            <label class="detail-label" for="sellingPoints">核心卖点 <span id="sourcePointsHint">必填</span></label>
+            <textarea id="sellingPoints" rows="5" maxlength="403" placeholder="每行一个卖点，填写 1–4 条，每条最多 100 字&#10;例如：宽松剪裁，日常穿着自在&#10;实用口袋，方便收纳随身物品" required></textarea>
+            <p class="detail-help">仅排版你填写的文案，不会自动添加材质、功效或产品承诺。</p>
+            <div id="englishCopyPanel" class="english-copy-panel" hidden>
+              <h4>英文文案 <span>原文会保留</span></h4>
+              <button type="button" class="btn secondary" id="translateDetails">将中文文案翻译成英文</button>
+              <p class="detail-help">点击翻译会将上方文案发送至 MyMemory，服务可能留存文案；图片不发送。<a href="https://mymemory.translated.net/terms-and-conditions" target="_blank" rel="noopener noreferrer">服务条款</a></p>
+              <p class="detail-help">也可直接填写英文。此功能不替换上传图片中已有的文字。</p>
+              <div id="translationStatus" class="detail-status" role="status" aria-live="polite"></div>
+              <label class="detail-label" for="englishProductName">英文产品名称 <span>最多 120 字符</span></label>
+              <input id="englishProductName" type="text" lang="en" maxlength="120" placeholder="e.g. Relaxed Straight-Leg Jeans" />
+              <label class="detail-label" for="englishProductSubtitle">英文副标题 <span>选填 · 最多 180 字符</span></label>
+              <input id="englishProductSubtitle" type="text" lang="en" maxlength="180" placeholder="e.g. Everyday Style, Effortless Comfort" />
+              <label class="detail-label" for="englishSellingPoints">英文卖点 <span>每条最多 240 字符</span></label>
+              <textarea id="englishSellingPoints" lang="en" rows="6" maxlength="963" placeholder="One selling point per line, 1–4 points.&#10;e.g. Relaxed fit for everyday comfort"></textarea>
+              <p class="detail-help">译文可编辑，建议核对产品名称、材质与卖点，再生成英文版图片。重新翻译会替换当前英文文案。</p>
+              <div id="translationStaleNotice" class="translation-stale" hidden><p>中文已修改，英文仍是上次译文。请重新翻译，或核对后保留当前英文。</p><button type="button" class="text-button" id="keepEnglishCopy">已核对，保留当前英文</button></div>
+            </div>
+          </section>
+          <section class="detail-section">
+            <h3><span>03</span> 模板风格</h3>
+            <div class="theme-options" role="group" aria-label="模板风格">
+              <label><input type="radio" name="detailTheme" value="ink" checked /><span class="theme-chip ink"></span>极简黑白</label>
+              <label><input type="radio" name="detailTheme" value="sand" /><span class="theme-chip sand"></span>暖沙米色</label>
+              <label><input type="radio" name="detailTheme" value="sage" /><span class="theme-chip sage"></span>清新草绿</label>
+            </div>
+          </section>
+        </fieldset>
+        <div class="generate-area"><button class="btn secondary cancel-translation" id="cancelTranslation" type="button" hidden>取消翻译</button><button class="btn blue" id="generateDetails" type="submit">生成 5 张详情图</button><div id="detailStatus" class="detail-status" role="status" aria-live="polite">填写完成后，点击生成查看整套效果。</div><p class="detail-help">刷新或关闭页面会清除当前素材，请及时导出。</p></div>
+      </form>
+      <div class="detail-results">
+        <div class="card detail-exportbar"><div><h3>整套预览 <span id="detailCount">0 / 5</span></h3><p id="detailResultHint">生成后可点击图片放大查看</p></div><div class="export-options"><label for="detailFormat">导出格式</label><select id="detailFormat"><option value="image/jpeg">JPG · 95% 质量</option><option value="image/png">PNG · 无损</option></select></div><div class="row"><button type="button" class="btn primary" id="downloadDetailsZip" disabled>打包下载 ZIP</button><button type="button" class="btn secondary" id="saveDetailsFolder" disabled>保存到文件夹</button></div><p class="detail-help" id="detailFolderHint">ZIP 内含 5 张独立图片，可直接解压使用。</p><div id="detailExportStatus" class="detail-status" role="status" aria-live="polite"></div></div>
+        <div id="detailEmpty" class="card detail-empty"><div class="empty-art" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span></div><h3>你的商品详情，从这里开始</h3><p>产品封面 · 核心卖点 · 细节展示<br />多角度展示 · 产品总览</p><small>先在左侧添加产品素材和文案</small></div>
+        <div id="detailPreviewGrid" class="detail-preview-grid"></div>
+      </div>
+    </div>
+  </section>
+  <section id="aiPanel" aria-labelledby="aiTab" hidden></section>
+  <section id="batchPanel" class="batch-workspace" aria-labelledby="studioToolTitle" hidden></section>
 </main>
+</div>
+<dialog id="detailLightbox" class="detail-lightbox" aria-labelledby="lightboxTitle"><div class="lightbox-toolbar"><h2 id="lightboxTitle">详情图预览</h2><button type="button" class="btn secondary" id="closeLightbox" aria-label="关闭预览">关闭 ✕</button></div><img id="lightboxImage" alt="" /><div class="lightbox-actions"><button type="button" class="btn secondary" id="previousDetail">上一张</button><button type="button" class="btn blue" id="downloadSingleDetail">下载这张</button><button type="button" class="btn secondary" id="nextDetail">下一张</button></div></dialog>
 
 <script>
 (() => {
@@ -541,7 +638,32 @@
   window.addEventListener('beforeunload', () => {
     items.forEach(item => URL.revokeObjectURL(item.url));
   });
+
+  // Copy the current crop without changing its source image, position or export settings.
+  document.addEventListener('detail:request-crop', () => {
+    const item = current();
+    if (!item) {
+      document.dispatchEvent(new CustomEvent('detail:crop-ready', { detail: { error: '请先在主图裁剪工具中上传图片。' } }));
+      return;
+    }
+    const out = document.createElement('canvas');
+    out.width = OUTPUT; out.height = OUTPUT;
+    renderTo(out.getContext('2d', { alpha: false }), item);
+    const name = safeBaseName(item.file.name) + '_800x800.png';
+    out.toBlob(blob => {
+      document.dispatchEvent(new CustomEvent('detail:crop-ready', { detail: blob ? { blob, name } : { error: '裁剪图读取失败，请重试。' } }));
+      out.width = out.height = 0;
+    }, 'image/png');
+  });
 })();
 </script>
+<script src="detail-renderer.js"></script>
+<script src="detail-export.js"></script>
+<script src="detail-translation.js"></script>
+<script src="detail-tool.js"></script>
+<script src="batch-image.js"></script>
+<script src="batch-workbench.js"></script>
+<script src="ai-workbench.js"></script>
+<script src="studio-navigation.js"></script>
 </body>
 </html>

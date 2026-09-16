@@ -1,0 +1,11 @@
+{
+  "name": "ecommerce-image-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=22 <25" },
+  "scripts": {
+    "start": "node cloud-server.cjs",
+    "start:local": "node ai-server.cjs",
+    "test": "node --test tests/*.test.cjs"
+  }
+}
