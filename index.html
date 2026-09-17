@@ -173,12 +173,12 @@
         <fieldset id="detailFields">
           <section class="detail-section">
             <h3><span>01</span> 产品素材</h3>
-            <label class="detail-drop" id="productDrop" for="productInput" tabindex="0" role="button"><strong>＋ 上传产品图</strong><span>JPG / PNG / WebP，最多 6 张，每张 ≤ 20 MB</span></label>
+            <label class="detail-drop" id="productDrop" for="productInput" tabindex="0" role="button"><strong>拖拽产品图到这里，或点击选择</strong><span>JPG / PNG / WebP，最多 6 张，每张 ≤ 20 MB</span></label>
             <input id="productInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
             <div id="productAssets" class="detail-assets" aria-label="已上传产品图"></div>
             <button type="button" class="text-button" id="useCropBtn">使用主图工具中当前的裁剪结果 →</button>
             <p class="detail-help">第一张用于封面。点击“设为封面”可更换；多张图按上传顺序用于多角度展示。</p>
-            <label class="detail-drop compact" id="detailDrop" for="detailInput" tabindex="0" role="button"><strong>＋ 上传细节图（选填）</strong><span>最多 6 张，用于展示材质、工艺等细节</span></label>
+            <label class="detail-drop compact" id="detailDrop" for="detailInput" tabindex="0" role="button"><strong>拖拽细节图到这里，或点击选择</strong><span>选填，最多 6 张，用于展示材质、工艺等细节</span></label>
             <input id="detailInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
             <div id="detailAssets" class="detail-assets" aria-label="已上传细节图"></div>
             <p class="detail-help">未上传细节图时，将使用产品图。素材保持原比例并完整显示。</p>
@@ -234,6 +234,7 @@
 </div>
 <dialog id="detailLightbox" class="detail-lightbox" aria-labelledby="lightboxTitle"><div class="lightbox-toolbar"><h2 id="lightboxTitle">详情图预览</h2><button type="button" class="btn secondary" id="closeLightbox" aria-label="关闭预览">关闭 ✕</button></div><img id="lightboxImage" alt="" /><div class="lightbox-actions"><button type="button" class="btn secondary" id="previousDetail">上一张</button><button type="button" class="btn blue" id="downloadSingleDetail">下载这张</button><button type="button" class="btn secondary" id="nextDetail">下一张</button></div></dialog>
 
+<script src="image-upload.js"></script>
 <script>
 (() => {
   const OUTPUT = 800;
@@ -526,26 +527,8 @@
     status.textContent = `完成：已发起 ${items.length} 张图片下载。`;
   }
 
-  fileInput.addEventListener('change', e => {
-    addFiles(e.target.files);
-    e.target.value = '';
-  });
-
-  ['dragenter','dragover'].forEach(type => {
-    dropzone.addEventListener(type, e => {
-      e.preventDefault();
-      dropzone.classList.add('drag');
-    });
-  });
-
-  ['dragleave','drop'].forEach(type => {
-    dropzone.addEventListener(type, e => {
-      e.preventDefault();
-      dropzone.classList.remove('drag');
-    });
-  });
-
-  dropzone.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+  ImageUpload.bind({ input: fileInput, zone: dropzone, onFiles: addFiles,
+    onMessage: message => { status.textContent = message; } });
 
   zoom.addEventListener('input', () => {
     const item = current();

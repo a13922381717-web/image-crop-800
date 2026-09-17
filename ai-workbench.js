@@ -13,14 +13,15 @@
     <div class="ai-layout"><div class="ai-controls card"><fieldset id="aiInputs">
       <h2><span class="ai-step">1</span> 产品素材</h2>
       <p class="ai-note">同一个款式，最多 8 张。标记正面、背面、侧面和细节，避免凭空生成未拍摄的角度。</p>
-      <label class="ai-upload" id="aiDropZone" for="aiFiles">拖拽产品图片到这里，或点击选择<span class="ai-upload-hint">支持多张 JPG / PNG / WebP，最多 8 张</span><input id="aiFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+      <label class="ai-upload" id="aiDropZone" for="aiFiles">拖拽产品图片到这里，或点击选择<span class="ai-upload-hint">支持多张 JPG / PNG / WebP，最多 8 张</span></label><input id="aiFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
       <div id="aiSources" class="ai-sources"></div>
       <label for="aiName">款号 / 产品名称</label><input id="aiName" maxlength="60" placeholder="例如：9993 大码工装牛仔裤">
       <label for="aiLocks">需要保留的产品特征</label><textarea id="aiLocks" rows="3" maxlength="1500" placeholder="例如：蓝色水洗、松紧腰、白色抽绳、两侧工装袋、宽松直筒。请以实物为准。"></textarea>
       <h2><span class="ai-step">2</span> 模特与场景</h2>
       <label for="aiModel">模特</label><select id="aiModel"><option value="大码成年男性，自然结实身材，白色素色T恤，白色无标运动鞋">大码男模 · 白色 T 恤</option><option value="成年男性，标准身材，白色素色T恤，白色无标运动鞋">标准男模 · 白色 T 恤</option><option value="保留原图人物、服装搭配和姿势，只替换背景">保留原模特 · 只换背景</option></select>
       <label for="aiScene">场景</label><select id="aiScene"><option value="简洁城市街景，浅灰混凝土墙，自然柔光，背景干净">简洁城市街景</option><option value="纯白摄影棚，柔和自然接触阴影">纯白摄影棚</option><option value="暖灰简约摄影棚，柔和均匀光线">暖灰摄影棚</option></select>
-      <label for="aiReference">模特 / 风格参考图（可选，1 张）</label><input id="aiReference" type="file" accept="image/jpeg,image/png,image/webp"><div id="aiReferencePreview"></div>
+      <p class="ai-note">模特 / 风格参考图（可选，1 张）</p>
+      <label class="ai-upload" id="aiReferenceDrop" for="aiReference">拖拽参考图到这里，或点击选择<span class="ai-upload-hint">JPG / PNG / WebP · 1 张 · 再次上传可替换</span></label><input id="aiReference" type="file" accept="image/jpeg,image/png,image/webp" hidden><div id="aiReferencePreview"></div>
       <label for="aiSize">生成尺寸</label><select id="aiSize"><option value="1024x1024">方图 1024 × 1024</option><option value="1024x1536">竖图 1024 × 1536</option></select>
       <p class="ai-note">AI 会重新绘制画面，不能保证产品像素不变。出图后请对照原图检查颜色、口袋、抽绳和版型；细节图使用下方的实拍排版。</p>
     </fieldset>
@@ -37,6 +38,7 @@
   function update() {
     $('aiInputs').disabled = state.busy;
     $('aiDropZone').setAttribute('aria-disabled', String(state.busy));
+    $('aiReferenceDrop').setAttribute('aria-disabled', String(state.busy));
     $('aiSample').disabled = state.busy || !state.configured || !state.sources.some(x => x.role === 'front');
     $('aiApprove').disabled = state.busy || !state.sample || state.sample.revision !== state.revision;
     $('aiSet').disabled = state.busy || !state.configured || !$('aiApprove').checked || !state.sample || state.sample.revision !== state.revision;
@@ -85,52 +87,20 @@
     }
     state.busy = false; changed(); renderSources(); status(errors.join(' ') || '素材已添加。请为背面、侧面和细节照片标记角度。');
   }
-  $('aiFiles').onchange = event => {
-    const files = [...event.target.files]; event.target.value = '';
-    addSources(files);
-  };
-  const dropZone = $('aiDropZone');
-  let dragDepth = 0;
-  const hasFiles = event => Array.from(event.dataTransfer?.types || []).includes('Files');
-  const resetDrag = () => { dragDepth = 0; dropZone.classList.remove('is-dragging'); };
-  dropZone.addEventListener('dragenter', event => {
-    if (!hasFiles(event)) return;
-    event.preventDefault(); dragDepth++;
-    if (!state.busy) dropZone.classList.add('is-dragging');
-  });
-  dropZone.addEventListener('dragover', event => {
-    if (!hasFiles(event)) return;
-    event.preventDefault(); event.stopPropagation();
-    event.dataTransfer.dropEffect = state.busy ? 'none' : 'copy';
-  });
-  dropZone.addEventListener('dragleave', event => {
-    if (!hasFiles(event)) return;
-    dragDepth = Math.max(0, dragDepth - 1);
-    if (!dragDepth) resetDrag();
-  });
-  dropZone.addEventListener('drop', event => {
-    if (!hasFiles(event)) return;
-    event.preventDefault(); event.stopPropagation(); resetDrag();
-    addSources(Array.from(event.dataTransfer.files));
-  });
-  // Prevent an accidental drop outside the upload area from replacing this page.
-  ['dragover', 'drop'].forEach(type => document.addEventListener(type, event => {
-    if (panel.hidden || !hasFiles(event)) return;
-    event.preventDefault();
-    if (type === 'dragover') event.dataTransfer.dropEffect = 'none';
-    else { resetDrag(); if (!state.busy) status('请把图片拖到左侧「产品素材」上传框内。'); }
-  }));
-  window.addEventListener('dragend', resetDrag);
-  $('aiReference').onchange = async event => {
-    const file = event.target.files[0]; event.target.value = ''; if (!file) return;
+  ImageUpload.bind({ input: $('aiFiles'), zone: $('aiDropZone'), onFiles: addSources,
+    isBusy: () => state.busy, onMessage: status, dragClass: 'is-dragging' });
+  async function addReference(files) {
+    const file = files[0]; if (state.busy || !file) return;
     state.busy = true; update();
     try {
       const reference = await loadFile(file); if (state.reference) URL.revokeObjectURL(state.reference.url); state.reference = reference;
       const img = document.createElement('img'); img.src = reference.data; img.alt = '风格参考图';
       const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'text-button'; remove.textContent = '移除参考'; remove.onclick = () => { URL.revokeObjectURL(state.reference.url); state.reference = null; $('aiReferencePreview').replaceChildren(); changed(); };
-      $('aiReferencePreview').replaceChildren(img, remove); changed();
+      $('aiReferencePreview').replaceChildren(img, remove); changed(); status('参考图已更新。请重新生成样图，确认模特与产品效果。');
     } catch (error) { status(error.message); } finally { state.busy = false; update(); }
-  };
+  }
+  ImageUpload.bind({ input: $('aiReference'), zone: $('aiReferenceDrop'), onFiles: addReference,
+    isBusy: () => state.busy, onMessage: status, dragClass: 'is-dragging' });
   ['aiName','aiLocks','aiModel','aiScene','aiSize'].forEach(id => $(id).addEventListener('input', changed));
   $('aiApprove').onchange = update;
   async function connection() {

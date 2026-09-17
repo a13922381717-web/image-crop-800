@@ -54,3 +54,5 @@
   .studio-shell .hero p { font-size: 12px; }
   .studio-shell .detail-layout { grid-template-columns: 1fr; }
 }
+[data-image-upload]:focus-visible { outline: 3px solid #93b4fd; outline-offset: 3px; }
+[data-image-upload][aria-busy="true"] { opacity: .55; cursor: wait; }

@@ -4,7 +4,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { randomBytes, timingSafeEqual } = require('node:crypto');
 const ROOT = __dirname;
-const ASSETS = new Set(['index.html', 'studio.css', 'studio-navigation.js', 'batch-image.js', 'batch-workbench.js', 'batch-workbench.css', 'detail-tool.js', 'detail-tool.css', 'detail-renderer.js', 'detail-export.js', 'detail-translation.js', 'ai-workbench.js', 'ai-workbench.css']);
+const ASSETS = new Set(['index.html', 'image-upload.js', 'studio.css', 'studio-navigation.js', 'batch-image.js', 'batch-workbench.js', 'batch-workbench.css', 'detail-tool.js', 'detail-tool.css', 'detail-renderer.js', 'detail-export.js', 'detail-translation.js', 'ai-workbench.js', 'ai-workbench.css']);
 const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript' };
 function fail(status, message) { return Object.assign(new Error(message), { status }); }
 async function readJSON(req) {

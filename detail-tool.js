@@ -143,11 +143,8 @@
   ['product', 'detail'].forEach(type => {
     const input = $(type === 'product' ? 'productInput' : 'detailInput');
     const drop = $(type === 'product' ? 'productDrop' : 'detailDrop');
-    input.addEventListener('change', () => { void addAssets(type, input.files); input.value = ''; });
-    drop.addEventListener('keydown', event => { if (!busy && ['Enter', ' '].includes(event.key)) { event.preventDefault(); input.click(); } });
-    ['dragenter', 'dragover'].forEach(name => drop.addEventListener(name, event => { event.preventDefault(); if (!busy) drop.classList.add('drag'); }));
-    ['dragleave', 'drop'].forEach(name => drop.addEventListener(name, event => { event.preventDefault(); drop.classList.remove('drag'); }));
-    drop.addEventListener('drop', event => { void addAssets(type, event.dataTransfer.files); });
+    ImageUpload.bind({ input, zone: drop, onFiles: files => addAssets(type, files),
+      isBusy: () => !!busy, onMessage: message => status(message, 'error') });
   });
   $('useCropBtn').addEventListener('click', () => {
     if (busy) return;

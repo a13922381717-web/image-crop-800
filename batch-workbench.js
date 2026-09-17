@@ -184,9 +184,8 @@
     } catch (error) { pending.forEach(asset => URL.revokeObjectURL(asset.url)); message(error.name === 'AbortError' ? '已取消读取，原有素材保留。' : error.message, error.name !== 'AbortError'); }
     finally { setBusy(''); }
   }
-  $('batchFiles').addEventListener('change', event => { void addFiles(event.target.files); event.target.value = ''; });
-  $('batchDrop').addEventListener('keydown', event => { if (!busy && ['Enter', ' '].includes(event.key)) { event.preventDefault(); $('batchFiles').click(); } });
-  for (const type of ['dragenter', 'dragover', 'dragleave', 'drop']) $('batchDrop').addEventListener(type, event => { event.preventDefault(); $('batchDrop').classList.toggle('drag', !busy && ['dragenter', 'dragover'].includes(type)); if (type === 'drop') void addFiles(event.dataTransfer.files); });
+  ImageUpload.bind({ input: $('batchFiles'), zone: $('batchDrop'), onFiles: addFiles,
+    isBusy: () => !!busy, onMessage: text => message(text, true) });
   $('batchClear').addEventListener('click', () => { if (busy) return; assets.forEach(asset => URL.revokeObjectURL(asset.url)); assets = []; assetRevision++; for (const saved of Object.values(states)) { release(saved.results); saved.results = []; } renderAssets(); renderResults(); message('素材和处理结果已清空。'); });
   $('batchFormat').addEventListener('change', event => { state().values.format = event.target.value; changed(); });
   $('batchQuality').addEventListener('input', event => { state().values.quality = Number(event.target.value); changed(); });
