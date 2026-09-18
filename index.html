@@ -65,6 +65,7 @@
   <link rel="stylesheet" href="studio.css" />
   <link rel="stylesheet" href="batch-workbench.css" />
   <link rel="stylesheet" href="ai-workbench.css" />
+  <link rel="stylesheet" href="retouch-workbench.css" />
 </head>
 <body>
 <div class="studio-shell">
@@ -87,10 +88,11 @@
         <div class="studio-nav-group"><p>排版与修饰</p>
           <button type="button" class="studio-nav-item" data-tool="collage" aria-controls="batchPanel"><span class="studio-tool-icon icon-cyan" aria-hidden="true">▦</span><span>商品拼图与长图拼接</span></button>
           <button type="button" class="studio-nav-item" data-tool="watermark" aria-controls="batchPanel"><span class="studio-tool-icon icon-blue" aria-hidden="true">水</span><span>批量添加文字水印</span></button>
+          <button type="button" id="retouchTab" class="studio-nav-item" data-tool="retouch" aria-controls="retouchPanel"><span class="studio-tool-icon icon-purple" aria-hidden="true">◇</span><span>去水印 / 局部修补</span></button>
           <button type="button" class="studio-nav-item" data-tool="background" aria-controls="batchPanel"><span class="studio-tool-icon icon-green" aria-hidden="true">◐</span><span>批量纯色背景替换</span></button>
         </div>
       </nav>
-      <div class="studio-sidebar-footer"><span><i aria-hidden="true"></i>11 项图片工具</span><p>本地图片处理 + AI 创作<br />中英文详情，一站完成</p><div id="studioNavStatus" role="status" aria-live="polite"></div></div>
+      <div class="studio-sidebar-footer"><span><i aria-hidden="true"></i>12 项图片工具</span><p>本地图片处理 + AI 创作<br />中英文详情，一站完成</p><div id="studioNavStatus" role="status" aria-live="polite"></div></div>
     </div>
   </aside>
 <main class="page">
@@ -229,6 +231,7 @@
     </div>
   </section>
   <section id="aiPanel" aria-labelledby="aiTab" hidden></section>
+  <section id="retouchPanel" aria-labelledby="retouchTab" hidden></section>
   <section id="batchPanel" class="batch-workspace" aria-labelledby="studioToolTitle" hidden></section>
 </main>
 </div>
@@ -647,6 +650,8 @@
 <script src="batch-image.js"></script>
 <script src="batch-workbench.js"></script>
 <script src="ai-workbench.js"></script>
+<script src="retouch-image.js"></script>
+<script src="retouch-workbench.js"></script>
 <script src="studio-navigation.js"></script>
 </body>
 </html>

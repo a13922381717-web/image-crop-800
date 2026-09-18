@@ -13,8 +13,8 @@ const { createServer } = require('../ai-server.cjs');
     const base = 'http://127.0.0.1:' + server.address().port;
     await page.goto(base);
     assert.equal((await page.request.get(base + '/image-upload.js')).status(), 200);
-    assert.equal(await page.locator('input[type=file]').count(), 6);
-    assert.equal(await page.locator('[data-image-upload]').count(), 6, 'Every file input has a drop target');
+    assert.equal(await page.locator('input[type=file]').count(), 7);
+    assert.equal(await page.locator('[data-image-upload]').count(), 7, 'Every file input has a drop target');
     const png = await page.evaluate(() => {
       const canvas = document.createElement('canvas'); canvas.width = 100; canvas.height = 160;
       const ctx = canvas.getContext('2d'); ctx.fillStyle = '#3269a3'; ctx.fillRect(0, 0, 100, 160);
@@ -112,7 +112,7 @@ const { createServer } = require('../ai-server.cjs');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     await page.locator('#aiReferenceDrop').screenshot({ path: '/tmp/yutang-reference-upload.png' });
     assert.deepEqual(errors, []);
-    console.log('PASS: all 6 upload inputs across 11 tools; multiple files; invalid files; reference replacement and single-file limit; click/keyboard; repeated selections; nested hover; outside-drop protection; mobile layout.');
+    console.log('PASS: all file inputs have drop targets; shared upload workflows, reference replacement, click/keyboard, nested hover, outside-drop protection and mobile layout.');
   } finally {
     await browser.close(); server.closeAllConnections(); await new Promise(resolve => server.close(resolve));
   }

@@ -12,6 +12,7 @@
     compress: { title: '图片压缩与格式转换', category: '批量图片处理', description: '调整最长边、导出格式与质量，查看处理前后的文件大小，再批量下载。', panel: 'batchPanel' },
     collage: { title: '商品拼图与长图拼接', category: '排版与修饰', description: '按素材顺序生成网格拼图或竖向长图，统一宽度、间距与背景。', panel: 'batchPanel' },
     watermark: { title: '批量添加文字水印', category: '排版与修饰', description: '统一添加店铺名或品牌文字，可设置位置、颜色、字号与透明度。', panel: 'batchPanel' },
+    retouch: { title: '去水印 / 局部修补', category: '排版与修饰', description: '框选水印，使用周边颜色或干净区域修补，保留原图尺寸，支持撤销与原图对照。', panel: 'retouchPanel' },
     background: { title: '批量纯色背景替换', category: '排版与修饰', description: '替换与图片边缘连通的纯色背景，适合白底商品图，可输出纯色或透明背景。', panel: 'batchPanel' }
   };
   const buttons = Array.from($('studioNav').querySelectorAll('[data-tool]'));
@@ -29,7 +30,7 @@
       if (active) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     });
-    ['cropPanel', 'detailPanel', 'batchPanel', 'aiPanel'].forEach(panel => { $(panel).hidden = panel !== entry.panel; });
+    ['cropPanel', 'detailPanel', 'batchPanel', 'aiPanel', 'retouchPanel'].forEach(panel => { $(panel).hidden = panel !== entry.panel; });
     $('studioToolTitle').textContent = entry.title;
     $('studioToolDescription').textContent = entry.description;
     $('studioCategory').textContent = entry.category;
@@ -39,7 +40,7 @@
   function select(id) {
     if (!entries[id]) return false;
     if (current === id) { setMenu(false); return true; }
-    if (window.DetailWorkbench?.isBusy() || window.BatchWorkbench?.isBusy() || window.AIWorkbench?.isBusy()) {
+    if (window.DetailWorkbench?.isBusy() || window.BatchWorkbench?.isBusy() || window.AIWorkbench?.isBusy() || window.RetouchWorkbench?.isBusy()) {
       $('studioNavStatus').textContent = '正在处理，请完成或取消后切换功能。';
       return false;
     }

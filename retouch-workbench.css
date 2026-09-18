@@ -1,0 +1,35 @@
+#retouchPanel { min-width:0; }
+.retouch-layout { display:grid; grid-template-columns:285px minmax(0,1fr); gap:20px; align-items:start; }
+.retouch-controls, .retouch-editor { padding:20px; min-width:0; }
+.retouch-controls h2 { font-size:15px; margin:0 0 14px; }
+.retouch-controls label:not(.retouch-drop) { display:block; margin:17px 0 8px; font-size:12px; color:#536078; }
+.retouch-drop { display:grid; gap:9px; border:1px dashed #a8bad5; background:#f7faff; border-radius:10px; padding:24px 12px; text-align:center; cursor:pointer; color:#315996; font-size:13px; }
+.retouch-drop small { color:#7d899d; line-height:1.6; font-size:11px; }
+.retouch-drop.drag { border-color:#2563eb; background:#e6efff; box-shadow:0 0 0 3px #3478f620; }
+.retouch-drop[aria-disabled=true] { opacity:.5; cursor:wait; }
+.retouch-help, .retouch-meta { font-size:11px; color:#758298; line-height:1.8; overflow-wrap:anywhere; }
+.retouch-meta { margin:12px 0 22px; }
+.retouch-controls select { font-size:12px; }
+.retouch-controls .btn { font-size:12px; margin-top:10px; }
+.retouch-controls .row { gap:8px; }
+.retouch-note { padding:12px; background:#f6f8fb; border-radius:8px; }
+.retouch-editor-head { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; flex-wrap:wrap; }
+.retouch-editor-head strong { font-size:14px; }
+.retouch-editor-head .btn { width:auto; font-size:12px; padding:8px 12px; }
+.retouch-view { display:flex; gap:9px; align-items:center; }
+.retouch-view select { width:auto; font-size:12px; padding:7px; }
+.retouch-stage { overflow:auto; max-height:650px; border:1px solid #e0e5ed; border-radius:10px; background:repeating-conic-gradient(#eff2f6 0% 25%,#fff 0% 50%) 50%/18px 18px; overscroll-behavior:contain; }
+.retouch-stage canvas { display:block; margin:auto; cursor:crosshair; touch-action:none; }
+.retouch-stage canvas[hidden] { display:none; }
+.retouch-empty { min-height:400px; display:grid; align-content:center; text-align:center; padding:30px; color:#8b98ac; gap:12px; background:#fafbfd; }
+.retouch-empty[hidden] { display:none; }
+.retouch-empty span { font-size:40px; color:#8eabe0; }
+.retouch-empty strong { font-size:15px; color:#64748b; }
+.retouch-empty p { font-size:12px; margin:0; line-height:1.8; }
+.retouch-selection { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:8px; margin-top:13px; font-size:12px; color:#61718a; }
+.retouch-selection .text-button { font-size:12px; }
+.retouch-status { margin-top:13px; padding:12px; border-radius:8px; background:#f3f7ff; color:#476389; font-size:12px; line-height:1.8; }
+.retouch-status.error { background:#fff1f2; color:#b91c1c; }
+.retouch-legend { font-size:11px; color:#7f8c9e; line-height:1.8; }
+@media(max-width:1050px) { .retouch-layout { grid-template-columns:1fr; }.retouch-controls { display:grid; grid-template-columns:1fr 1fr; gap:20px; }.retouch-stage { max-height:60vh; } }
+@media(max-width:580px) { .retouch-controls { grid-template-columns:1fr; gap:15px; }.retouch-editor,.retouch-controls { padding:16px; }.retouch-view { flex-wrap:wrap; }.retouch-empty { min-height:270px; }.retouch-editor-head { gap:10px; } }
